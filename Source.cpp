@@ -1,77 +1,11 @@
 #include <iostream>
 #include <string>
+#include "TrafficPolice/Fine.h"
+#include "TrafficPolice/AlcoholAbuseFine.h"
+#include "TrafficPolice/OverSpeedFine.h"
+#include "TrafficPolice/SocialDangerFine.h"
 
 using namespace std;
-
-class Fines {
-protected:
-   string fine;
-   int points;
-public:
-
-   void Setfine(string& fine) {
-      this->fine = fine;
-   }
-
-   void SetPoints(int points) {
-      this->points = points;
-   }
-
-   virtual string& GetString() {
-      return fine;
-   }
-   virtual int GetPoints() {
-      return points;
-   }
-};
-
-class SocialDanger : public Fines {
-public:
-   SocialDanger() {
-      this->fine = "Risking other people's lives";
-      this->points = 15;
-   }
-   string& GetString() override {
-      return this->fine;
-   }
-
-   int GetPoints() override {
-      return this->points;
-   }
-};
-
-class OverSpeed : public Fines {
-public:
-   OverSpeed() {
-      this->fine = "Increased speed in the wrong place";
-      this->points = 5;
-   }
-
-   string& GetString() override {
-      return this->fine;
-   }
-
-   int GetPoints() override {
-      return this->points;
-   }
-};
-
-class AlcoholAbuse : public Fines {
-public:
-   AlcoholAbuse() {
-      this->fine = "Excess alcohol ratio";
-      this->points = 8;
-   }
-
-   string& GetString() override {
-      return this->fine;
-   }
-
-   int GetPoints() override {
-      return this->points;
-   }
-
-};
 
 template <typename T>
 class List {
@@ -530,19 +464,19 @@ public:
 
 class Ticket {
 private:
-   Fines fine;
+    Fine fine;
    string vehicle;
 public:
 
    Ticket() = default;
 
-   Ticket(Fines* fine, string vehicle) {
+   Ticket(Fine* fine, string vehicle) {
       this->fine.Setfine(fine->GetString());
       this->fine.SetPoints(fine->GetPoints());
       this->vehicle = vehicle;
    }
 
-   Fines& GetFine() {
+   Fine& GetFine() {
       return this->fine;
    }
 
@@ -553,9 +487,9 @@ public:
 
 class Region {
 private:
-   Tree<string, List<Fines>> region;
+   Tree<string, List<Fine>> region;
 
-   List<Fines> Find_list(string name) {
+   List<Fine> Find_list(string name) {
       return region.Tree_Find_Data(name);
    }
 
@@ -564,7 +498,7 @@ private:
    }
 
    void Add_Region_Node(Ticket& ticket) {
-      List<Fines> temp;
+      List<Fine> temp;
       temp.List_push_back(ticket.GetFine());
       region.Tree_Add_Node(ticket.GetVehicle(), temp);
    }
@@ -667,13 +601,13 @@ public:
 
 };
 
-int operator == (Fines& fine1, Fines& fine2);
+int operator == (Fine& fine1, Fine& fine2);
 
-int operator < (Fines& fine1, Fines& fine2);
+int operator < (Fine& fine1, Fine& fine2);
 
-int operator > (Fines& fine1, Fines& fine2);
+int operator > (Fine& fine1, Fine& fine2);
 
-ostream& operator<<(ostream& cout, List<Fines>& fines);
+ostream& operator<<(ostream& cout, List<Fine>& fines);
 
 ostream& operator<<(ostream& cout, Region& region);
 
@@ -685,7 +619,7 @@ void PrintInformation() {
 }
 
 int main() {
-   Fines* fine[] = { new SocialDanger, new OverSpeed, new AlcoholAbuse };
+   Fine* fine[] = { new SocialDangerFine, new OverSpeedFine, new AlcoholAbuseFine };
    DataBase base;
    string vehicle, vehicle_2;
    bool cycle = true;
@@ -702,6 +636,9 @@ int main() {
             cin >> vehicle;
             if (vehicle.size() == 6)
                break;
+            else {
+                cout << "Length should be 6! Please rewrite" << endl;
+            }
          }
          cout << "Choose fine:\n1: Social Danger\n2: Over Speed\n3: Alcohol Abuse\n";
          while (true) {
@@ -718,7 +655,10 @@ int main() {
          while (true) {
             cin >> vehicle;
             if (vehicle.size() == 6)
-               break;
+                break;
+            else {
+                cout << "Length should be 6! Please rewrite" << endl;
+            }
          }
          base.Remove_Node(vehicle);
          break;
@@ -728,7 +668,10 @@ int main() {
          while (true) {
             cin >> vehicle;
             if (vehicle.size() == 6)
-               break;
+                break;
+            else {
+                cout << "Length should be 6! Please rewrite" << endl;
+            }
          }
          cout << "Choose fine:\n1: Social Danger\n2: Over Speed\n3: Alcohol Abuse\n";
          while (true) {
@@ -745,7 +688,10 @@ int main() {
          while (true) {
             cin >> vehicle;
             if (vehicle.size() == 6)
-               break;
+                break;
+            else {
+                cout << "Length should be 6! Please rewrite" << endl;
+            }
          }
          base.Find_Vehicle(vehicle);
          break;
@@ -759,7 +705,10 @@ int main() {
          while (true) {
             cin >> vehicle;
             if (vehicle.size() == 6)
-               break;
+                break;
+            else {
+                cout << "Length should be 6! Please rewrite" << endl;
+            }
          }
          cout << "Input second vehicle: ";
          cin >> vehicle_2;
@@ -784,19 +733,19 @@ int main() {
    return EXIT_SUCCESS;
 }
 
-int operator == (Fines& fine1, Fines& fine2) {
+int operator == (Fine& fine1, Fine& fine2) {
    return fine1.GetString().compare(fine2.GetString()) == 0;
 }
 
-int operator < (Fines& fine1, Fines& fine2) {
+int operator < (Fine& fine1, Fine& fine2) {
    return fine1.GetString().compare(fine2.GetString()) == -1;
 }
 
-int operator > (Fines& fine1, Fines& fine2) {
+int operator > (Fine& fine1, Fine& fine2) {
    return fine1.GetString().compare(fine2.GetString()) == 1;
 }
 
-ostream& operator<<(ostream& cout, List<Fines>& fines) {
+ostream& operator<<(ostream& cout, List<Fine>& fines) {
    cout << " (Vehicle)\n";
    for (int i = 0; i < fines.GetSize(); i++) {
       cout << "\n" << i + 1 << ": " << fines[i].GetString() << " (Points: " << fines[i].GetPoints() << ")" << endl;
